@@ -9,9 +9,10 @@ def number_of_subscribers(subreddit):
     URL = "https://www.reddit.com/r/{}/about.json".format(subreddit)
     HEADERS = {"User-Agent": "PostmanRuntime/7.35.0"}
 
-    try:
-        RESPONSE = requests.get(URL, headers=HEADERS, allow_redirects=False)
-        return RESPONSE.json().get("data").get("subscribers")
+    response = requests.get(url, headers=headers)
 
-    except Exception:
+    if response.status_code == 200:
+        data = response.json()
+        return data.get("data", {}).get("subscribers", 0)
+    else:
         return 0
