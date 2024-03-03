@@ -1,8 +1,6 @@
 #!/usr/bin/python3
 """Return the number of subscribers of a given subreddit"""
-
 import requests
-
 
 def number_of_subscribers(subreddit):
     """function that fetches number_of_subscribers"""
@@ -11,7 +9,22 @@ def number_of_subscribers(subreddit):
 
     try:
         RESPONSE = requests.get(URL, headers=HEADERS, allow_redirects=False)
-        return RESPONSE.json().get("data").get("subscribers")
+        RESPONSE.raise_for_status()  # Raise exception for bad status codes
 
-    except Exception:
-        return 0
+        data = RESPONSE.json().get("data")
+        if data:
+            return data.get("subscribers")
+        else:
+            return 0  # Subreddit data not found
+
+    except requests.RequestException as e:
+        print("Error accessing Reddit API:", e)
+        return 0  # Return 0 in case of any error
+    except Exception as e:
+        print("Error:", e)
+        return 0  # Return 0 for any unexpected error
+
+# Test your function with different subreddits
+print(number_of_subscribers("existing_subreddit"))
+print(number_of_subscribers("nonexisting_subreddit"))
+
